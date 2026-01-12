@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add:*)",
+      "Bash(./venv/bin/python:*)",
+      "Bash(DATABASE_URL= ./venv/bin/python manage.py migrate:*)",
+      "Bash(DATABASE_URL= ./venv/bin/python manage.py check:*)",
+      "Bash(/Users/jpsingh/Developer/Project/coldmail/backend/venv/bin/pip install:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(pnpm --filter @coldmail/frontend build:*)",
+      "Bash(pnpm:*)",
+      "Bash(DATABASE_URL= /Users/jpsingh/Developer/Project/coldmail/backend/venv/bin/python:*)",
+      "Bash(source venv/bin/activate)",
+      "Bash(python manage.py makemigrations:*)",
+      "Bash(python manage.py:*)",
+      "Bash(npm install:*)",
+      "Bash(docker-compose:*)",
+      "Bash(DATABASE_URL=\"postgres://coldmail:coldmail_dev_password@localhost:5432/coldmail\" REDIS_URL=\"redis://localhost:6379/0\" python manage.py migrate:*)",
+      "Bash(DATABASE_URL=\"postgres://coldmail:coldmail_dev_password@localhost:5432/coldmail\" DJANGO_SUPERUSER_PASSWORD=\"admin123\" python manage.py createsuperuser:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "WebSearch",
+      "Bash(done)",
+      "Bash(tree:*)",
+      "mcp__ide__getDiagnostics"
+    ]
+  }
+}

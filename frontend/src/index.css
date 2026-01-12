@@ -1,0 +1,273 @@
+@import "tailwindcss";
+
+/*
+ * ColdMail Design System
+ * Distinctive, production-grade design following fullstack-design skill
+ * Uses DM Sans (display) + Source Sans 3 (body) for unique typography
+ */
+
+/* Import distinctive fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+@theme {
+  /* Colors - Deep Indigo Theme with Teal accents */
+  --color-background: hsl(220 25% 97%);
+  --color-foreground: hsl(230 25% 12%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(230 25% 12%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(230 25% 12%);
+
+  /* Primary: Deep Indigo */
+  --color-primary: hsl(243 75% 59%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  /* Secondary: Soft Slate */
+  --color-secondary: hsl(220 20% 94%);
+  --color-secondary-foreground: hsl(230 25% 18%);
+
+  /* Muted: Subtle Gray-Blue */
+  --color-muted: hsl(220 20% 95%);
+  --color-muted-foreground: hsl(220 10% 45%);
+
+  /* Accent: Vibrant Teal */
+  --color-accent: hsl(172 66% 50%);
+  --color-accent-foreground: hsl(230 25% 12%);
+
+  /* Destructive: Warm Red */
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  /* Borders & Inputs */
+  --color-border: hsl(220 20% 88%);
+  --color-input: hsl(220 20% 88%);
+  --color-ring: hsl(243 75% 59%);
+
+  /* Extended Semantic Colors */
+  --color-success: hsl(152 69% 31%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(0 0% 0%);
+  --color-info: hsl(199 89% 48%);
+  --color-info-foreground: hsl(0 0% 100%);
+
+  /* Sidebar: Deep Blue-Black */
+  --color-sidebar: hsl(230 35% 10%);
+  --color-sidebar-foreground: hsl(220 20% 95%);
+  --color-sidebar-muted: hsl(220 15% 50%);
+  --color-sidebar-accent: hsl(230 30% 16%);
+  --color-sidebar-accent-foreground: hsl(220 20% 95%);
+  --color-sidebar-border: hsl(230 25% 18%);
+  --color-sidebar-ring: hsl(243 75% 59%);
+
+  /* Radius - Slightly rounder for modern feel */
+  --radius: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+
+  /* Enhanced Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  --shadow-glow: 0 0 20px -5px hsl(243 75% 59% / 0.35);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-optical-sizing: auto;
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+  }
+
+  /* Distinctive display font for headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    @apply tracking-tight font-semibold;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl font-bold;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl font-bold;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+
+  /* Enhanced focus states */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Better selection color */
+  ::selection {
+    background-color: hsl(243 75% 59% / 0.2);
+  }
+}
+
+@layer components {
+  /* Page header component */
+  .page-header {
+    @apply flex flex-col gap-1 md:flex-row md:items-center md:justify-between mb-6;
+  }
+
+  .page-title {
+    @apply text-2xl md:text-3xl font-bold tracking-tight text-foreground;
+  }
+
+  .page-description {
+    @apply text-sm md:text-base text-muted-foreground;
+  }
+
+  /* Stat card variants */
+  .stat-card {
+    @apply relative overflow-hidden;
+  }
+
+  .stat-card-icon {
+    @apply absolute -right-4 -top-4 h-24 w-24 text-primary/5;
+  }
+
+  /* Better focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* Gradient backgrounds */
+  .gradient-primary {
+    @apply bg-gradient-to-br from-primary to-primary/80;
+  }
+
+  .gradient-success {
+    @apply bg-gradient-to-br from-green-500 to-green-600;
+  }
+
+  .gradient-warning {
+    @apply bg-gradient-to-br from-amber-500 to-orange-500;
+  }
+
+  .gradient-info {
+    @apply bg-gradient-to-br from-blue-500 to-cyan-500;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply animate-pulse bg-muted rounded;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20;
+  }
+}
+
+@layer utilities {
+  /* Scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent;
+  }
+
+}
+
+/* Dark Mode - Deep Indigo Theme */
+.dark {
+  --color-background: hsl(230 30% 8%);
+  --color-foreground: hsl(220 20% 95%);
+  --color-card: hsl(230 25% 12%);
+  --color-card-foreground: hsl(220 20% 95%);
+  --color-popover: hsl(230 25% 12%);
+  --color-popover-foreground: hsl(220 20% 95%);
+
+  --color-primary: hsl(243 75% 65%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  --color-secondary: hsl(230 20% 18%);
+  --color-secondary-foreground: hsl(220 20% 90%);
+
+  --color-muted: hsl(230 20% 16%);
+  --color-muted-foreground: hsl(220 15% 55%);
+
+  --color-accent: hsl(172 66% 45%);
+  --color-accent-foreground: hsl(0 0% 100%);
+
+  --color-destructive: hsl(0 65% 45%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  --color-border: hsl(230 20% 18%);
+  --color-input: hsl(230 20% 18%);
+  --color-ring: hsl(243 75% 65%);
+
+  --color-sidebar: hsl(230 35% 6%);
+  --color-sidebar-foreground: hsl(220 20% 95%);
+  --color-sidebar-muted: hsl(220 15% 50%);
+  --color-sidebar-accent: hsl(230 30% 12%);
+  --color-sidebar-border: hsl(230 25% 14%);
+}
+
+/* Toast animations - subtle fade */
+[data-state="open"] {
+  animation: toastIn 0.15s ease-out;
+}
+
+[data-state="closed"] {
+  animation: toastOut 0.1s ease-in;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

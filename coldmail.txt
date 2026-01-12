@@ -1,0 +1,2288 @@
+ColdMail - Open Source Cold Email Platform
+
+Complete Project Blueprint
+
+---
+
+1. PROJECT OVERVIEW
+
+What Is It?
+
+A powerful, self-hosted cold email platform for sending personalized outreach emails with built-in tracking, visitor identification, contact scoring, and full API/webhook integrations. Designed to replace expensive SaaS tools while giving you complete control over your data.
+
+Target Users
+
+- Freelancers doing outreach
+- Small sales teams
+- Startups
+- Agencies
+- Developers building automations
+- Anyone who wants to own their email infrastructure
+
+Core Philosophy
+
+- Production-ready (not a toy or MVP)
+- Self-hosted (own your data, no vendor lock-in)
+- Open source (community-driven, MIT licensed)
+- Cold email focused (purpose-built, not bloated)
+- API-first (integrate with anything)
+- All-in-one (no external dependencies)
+
+---
+
+2. TECH STACK
+
+┌─────────────────────────────────────────────────────────┐
+│ FRONTEND                                                │
+│ React 18 + TypeScript + TanStack Query + Tailwind CSS  │
+│ shadcn/ui components                                    │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│ BACKEND                                                 │
+│ Django 5.x + Django REST Framework + Python 3.12       │
+│ django-allauth (OAuth) + Celery (jobs) + Redis         │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│ DATABASE                                                │
+│ PostgreSQL 16 (primary) + Redis (cache/queue)          │
+└─────────────────────────────────────────────────────────┘
+
+Stack Details
+┌───────────┬───────────────────────┬────────────────────────────────────────┐
+│ Layer     │ Technology            │ Why                                    │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Frontend  │ React 18              │ Large ecosystem, good for open source  │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Styling   │ Tailwind + shadcn/ui  │ Clean, modern, customizable            │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ State     │ TanStack Query        │ Best for API data fetching             │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Backend   │ Django 5              │ Admin free, mature, batteries included │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ API       │ Django REST Framework │ Industry standard, OpenAPI support     │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Auth      │ django-allauth        │ OAuth (Google, Microsoft) built-in     │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Jobs      │ Celery + Redis        │ Gold standard for Python               │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Scheduler │ Celery Beat           │ Cron jobs built-in                     │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Database  │ PostgreSQL            │ Reliable, scalable                     │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Cache     │ Redis                 │ Queue + caching + rate limiting        │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Server    │ Gunicorn + Nginx      │ Production ready                       │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Deploy    │ Docker Compose        │ One command deploy                     │
+├───────────┼───────────────────────┼────────────────────────────────────────┤
+│ Docs      │ Swagger/ReDoc         │ Auto-generated API documentation       │
+└───────────┴───────────────────────┴────────────────────────────────────────┘
+
+---
+
+3. FEATURES
+
+3.1 Authentication & Users
+
+- Email/password registration with email verification
+- Login/logout with JWT tokens
+- OAuth login (Google, Microsoft)
+- Password reset with secure tokens
+- User profile management
+- Two-factor authentication (TOTP)
+- Django Admin for user management
+- Session management (view/revoke active sessions)
+
+3.2 Email Accounts (Sending Configs)
+
+- Connect Gmail via OAuth
+- Connect Outlook/Microsoft 365 via OAuth
+- Add custom SMTP servers
+- Test connection with real email
+- Daily sending limits per account
+- Hourly sending limits per account
+- Warmup scheduling (gradual limit increase)
+- Multiple accounts per user
+- Account health monitoring
+- Auto-rotate between accounts
+
+3.3 Contacts
+
+- Import from CSV/Excel/JSON
+- Manual add/edit/delete
+- Custom fields (any field you want, typed: text, number, date, url)
+- Tags for organization (with colors)
+- Contact lists/segments
+- Smart segments (dynamic based on conditions)
+- Duplicate detection and merge
+- Advanced search and filtering
+- Bulk operations (tag, delete, move to list)
+- Export contacts (CSV, Excel, JSON)
+- Contact activity timeline
+
+Contact Scoring System (Gamification)
+- Score points for email opens (+5 points)
+- Score points for link clicks (+10 points)
+- Score points for website visits (+15 points)
+- Score points for replies (+25 points)
+- Score points for page views (+3 per page)
+- Score points for time on site (+1 per minute)
+- Configurable scoring rules
+- Hot/Warm/Cold lead classification based on score
+- Score decay over time (configurable)
+- Leaderboard view of hottest leads
+- Automated actions based on score thresholds
+- Webhook trigger when score crosses threshold
+
+3.4 Email Composer
+
+- Rich text editor (TipTap)
+- Personalization variables {{firstName}}, {{company}}, {{custom.fieldName}}
+- Conditional content (if/else blocks)
+- Spintax support {{Hello|Hi|Hey}}
+- Preview with real contact data
+- Save as template
+- Template categories/folders
+- HTML mode for advanced users
+- Plain text fallback auto-generation
+- Attachment support
+- Image hosting/embedding
+- Unsubscribe link insertion
+- Signature management
+
+3.5 Sending
+
+- Send to list/segment
+- Send to individual contacts
+- Schedule for specific date/time
+- Timezone-aware scheduling
+
+Smart Sending Controls:
+- Random delay between emails (e.g., 30-90 seconds)
+- Batch sending with batch delay (e.g., 10 emails, wait 5 minutes)
+- Spread sending across time window (e.g., 9 AM - 5 PM)
+- Send only on specific days (weekdays only)
+- Respect daily/hourly limits per account
+- Auto-rotate between multiple accounts
+- Queue management (pause/resume/cancel)
+- Retry failed sends with exponential backoff
+- Priority queue (urgent emails first)
+
+A/B Testing:
+- Test subject lines
+- Test email content
+- Test send times
+- Auto-select winner based on open/click rate
+
+3.6 Sequences (Multi-step Campaigns)
+
+- Create email sequences (Step 1 → Step 2 → Step 3...)
+- Unlimited steps per sequence
+- Wait X days/hours between steps
+- Wait until specific day of week
+- Stop sequence on reply
+- Stop sequence on click (configurable)
+- Stop sequence on website visit
+- Stop sequence on score threshold
+- Manual step (task reminder, not auto-send)
+- Sequence branching (if opened → path A, else → path B)
+- Sequence templates
+- Sequence analytics per step
+- Bulk enroll contacts
+- Re-enroll options
+
+3.7 Tracking (Built-in)
+
+- Open tracking (invisible pixel)
+- Click tracking (link redirect)
+- Track timestamp, IP, user agent
+- Device detection (mobile/desktop/tablet)
+- Email client detection (Gmail, Outlook, Apple Mail, etc.)
+- Country/city detection (IP geolocation)
+- Bot/prefetch detection and filtering
+- All stored in same database (no external services)
+- Real-time tracking updates
+
+3.8 Reply Detection
+
+- Connect inbox via IMAP/OAuth
+- Poll for replies automatically
+- Auto-detect replies to campaigns/sequences
+- Mark contact as "replied"
+- Stop sequence on reply
+- Reply sentiment detection (positive/negative/neutral)
+- Out-of-office detection
+- Bounce detection from replies
+- Forward replies to team email (optional)
+
+3.9 Visitor Tracking (Website Intelligence)
+
+- JavaScript snippet for your website
+- Track visitor IP + pages viewed
+- Track time on page, scroll depth
+- Match visitor IP to email recipient IP
+- Know when email recipient visits your site
+- Timeline: Email opened → Visited pricing page → Viewed demo
+- Company identification from IP (enrichment)
+- Webhook trigger on match
+- Lead scoring based on behavior
+- UTM parameter tracking
+- Integration with contact scoring system
+
+3.10 Reports & Analytics
+
+Campaign Stats:
+- Sent, delivered, opened, clicked, replied, bounced
+- Website visits from email recipients
+- Open rate, click rate, reply rate, bounce rate
+
+Analytics:
+- Best time to send analysis
+- Best day to send analysis
+- Timeline view of all activity
+- Per-contact activity history
+- Sequence funnel visualization
+- Comparative reports (campaign vs campaign)
+- Contact score distribution
+- Hot leads report
+
+Export:
+- Export to CSV/Excel/PDF
+- Scheduled report emails
+- Custom date ranges
+- Real-time dashboard
+
+3.11 Deliverability
+
+- Bounce handling (soft/hard bounce detection)
+- Auto-remove hard bounces
+- Unsubscribe management (one-click, list-unsubscribe header)
+- Global suppression list
+- Domain warmup tracking
+- Sending reputation score
+- SPF/DKIM/DMARC checker
+- Email content spam score checker
+- Blacklist monitoring
+- Deliverability alerts
+
+3.12 API & Integrations
+
+Full REST API:
+- API for all operations
+- API key authentication with scopes
+- Rate limiting per API key
+- OpenAPI/Swagger documentation
+
+Webhooks for all events:
+- email.sent
+- email.delivered
+- email.opened
+- email.clicked
+- email.replied
+- email.bounced
+- email.unsubscribed
+- email.complained
+- contact.created
+- contact.updated
+- contact.tagged
+- contact.score_changed
+- contact.score_threshold
+- sequence.enrolled
+- sequence.completed
+- sequence.replied
+- visitor.identified
+- visitor.matched
+- visitor.page_viewed
+
+Webhook Features:
+- Retry with exponential backoff
+- Signature verification (HMAC)
+- Delivery logs with replay
+- Test webhook endpoint
+
+3.13 Native Integrations
+
+Automation Platforms:
+- n8n (self-hosted automation)
+- Zapier (via webhooks)
+- Make (Integromat)
+- Pipedream
+
+Notifications:
+- Slack notifications
+- Discord notifications
+- Email notifications
+- Telegram notifications
+
+CRM Sync:
+- HubSpot CRM sync
+- Salesforce sync
+- Pipedrive sync
+- Close CRM sync
+
+Spreadsheets:
+- Google Sheets sync
+- Airtable sync
+- Notion (contact database)
+
+Calendar:
+- Cal.com / Calendly (booking detection)
+- Google Calendar
+- Stop sequence on booking
+
+3.14 Team Features
+
+- Invite team members by email
+- Role-based access control:
+  - Owner: Full access, billing, delete workspace
+  - Admin: Manage team, all features
+  - Member: Send campaigns, manage contacts
+  - Viewer: Read-only access, reports
+- Shared email accounts
+- Shared templates
+- Shared contact lists
+- Team activity log
+- User-level sending limits
+- Workspace switching (multiple teams)
+
+3.15 Settings & Configuration
+
+- Workspace settings
+- Custom tracking domain
+- Custom unsubscribe page
+- Email footer customization
+- Default sending settings
+- Scoring rules configuration
+- Notification preferences
+- Data export (GDPR compliance)
+- Account deletion
+- Audit log
+
+---
+
+4. DATABASE SCHEMA
+
+Core Tables
+
+-- USERS & AUTH (django-allauth handles most)
+users
+├── id (UUID, PK)
+├── email (unique, indexed)
+├── name
+├── avatar_url
+├── timezone
+├── is_active
+├── is_staff (admin access)
+├── is_verified (email verified)
+├── two_factor_enabled
+├── created_at
+├── updated_at
+└── last_login
+
+-- API KEYS
+api_keys
+├── id (UUID, PK)
+├── user_id (FK → users)
+├── workspace_id (FK → workspaces, nullable)
+├── name (description/label)
+├── key_prefix (first 8 chars, for display: "cm_live_abc...")
+├── key_hash (hashed full key, bcrypt)
+├── scopes (JSONB array: ["contacts:read", "campaigns:write", ...])
+├── last_used_at
+├── last_used_ip
+├── expires_at (nullable)
+├── is_active
+├── created_at
+└── revoked_at (nullable)
+
+-- WORKSPACES (Teams)
+workspaces
+├── id (UUID, PK)
+├── name
+├── slug (unique, for URLs)
+├── owner_id (FK → users)
+├── settings (JSONB)
+├── scoring_rules (JSONB)
+├── created_at
+└── updated_at
+
+workspace_members
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── user_id (FK)
+├── role (owner, admin, member, viewer)
+├── invited_by (FK → users)
+├── invited_at
+├── joined_at
+└── UNIQUE(workspace_id, user_id)
+
+workspace_invites
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── email
+├── role
+├── token (unique)
+├── invited_by (FK → users)
+├── expires_at
+├── accepted_at (nullable)
+└── created_at
+
+-- EMAIL ACCOUNTS (sending configs)
+email_accounts
+├── id (UUID, PK)
+├── workspace_id (FK → workspaces)
+├── user_id (FK → users, who added it)
+├── name (display name)
+├── provider (gmail, outlook, smtp)
+├── email_address (indexed)
+├── from_name (display name in emails)
+├── reply_to (optional different reply-to)
+├── smtp_host (nullable)
+├── smtp_port (nullable)
+├── smtp_username (nullable)
+├── smtp_password (encrypted, nullable)
+├── imap_host (nullable, for reply detection)
+├── imap_port (nullable)
+├── imap_username (nullable)
+├── imap_password (encrypted, nullable)
+├── oauth_provider (google, microsoft, nullable)
+├── oauth_access_token (encrypted, nullable)
+├── oauth_refresh_token (encrypted, nullable)
+├── oauth_expires_at (nullable)
+├── oauth_scopes (JSONB array)
+├── daily_limit (default 50)
+├── hourly_limit (default 20)
+├── sent_today (reset daily via cron)
+├── sent_this_hour (reset hourly via cron)
+├── warmup_enabled
+├── warmup_current_limit
+├── warmup_target_limit
+├── warmup_increment
+├── warmup_started_at
+├── health_status (healthy, warning, error)
+├── health_checked_at
+├── last_error
+├── is_active
+├── is_shared (team can use)
+├── last_used_at
+├── created_at
+└── updated_at
+
+-- TAGS
+tags
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── name (indexed)
+├── color (hex: #FF5733)
+├── description
+├── created_at
+└── UNIQUE(workspace_id, name)
+
+-- CONTACTS
+contacts
+├── id (UUID, PK)
+├── workspace_id (FK → workspaces)
+├── email (indexed)
+├── first_name
+├── last_name
+├── company
+├── job_title
+├── phone
+├── linkedin_url
+├── website
+├── location
+├── custom_fields (JSONB: {"industry": "Tech", "revenue": 1000000})
+├── status (active, unsubscribed, bounced, complained)
+├── source (import, manual, api, form)
+├── score (engagement score 0-100, indexed)
+├── score_level (hot, warm, cold, frozen)
+├── score_updated_at
+├── last_contacted_at
+├── last_opened_at
+├── last_clicked_at
+├── last_replied_at
+├── last_visited_at
+├── total_emails_sent
+├── total_opens
+├── total_clicks
+├── total_visits
+├── total_page_views
+├── created_at
+├── updated_at
+└── UNIQUE(workspace_id, email)
+
+contact_tags
+├── id (UUID, PK)
+├── contact_id (FK → contacts, indexed)
+├── tag_id (FK → tags, indexed)
+├── added_at
+├── added_by (FK → users)
+└── UNIQUE(contact_id, tag_id)
+
+contact_lists
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── name
+├── description
+├── is_smart (dynamic based on conditions)
+├── smart_conditions (JSONB, for smart lists)
+├── contact_count (denormalized, updated via trigger)
+├── created_by (FK → users)
+├── created_at
+└── updated_at
+
+contact_list_members
+├── id (UUID, PK)
+├── contact_id (FK, indexed)
+├── list_id (FK, indexed)
+├── added_at
+├── added_by (FK → users)
+└── UNIQUE(contact_id, list_id)
+
+-- CONTACT SCORE HISTORY
+contact_score_events
+├── id (UUID, PK)
+├── contact_id (FK → contacts, indexed)
+├── event_type (email_opened, link_clicked, page_viewed, replied, visited, decay)
+├── points (can be negative for decay)
+├── source_type (campaign, sequence, website, manual)
+├── source_id (UUID, nullable)
+├── metadata (JSONB: page_url, email_subject, etc.)
+├── created_at (indexed)
+
+-- SCORING RULES (per workspace)
+scoring_rules
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── event_type
+├── points
+├── is_active
+├── conditions (JSONB, optional: {"page_url_contains": "pricing"})
+└── created_at
+
+-- GLOBAL UNSUBSCRIBES & SUPPRESSIONS
+unsubscribes
+├── id (UUID, PK)
+├── workspace_id (FK → workspaces)
+├── email (indexed)
+├── reason (user_requested, hard_bounce, spam_complaint, manual)
+├── source_type (campaign, sequence, manual, api)
+├── source_id (UUID, nullable)
+├── ip_address
+├── user_agent
+├── created_at
+└── UNIQUE(workspace_id, email)
+
+-- TEMPLATES
+email_templates
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── user_id (FK, creator)
+├── name
+├── category (nullable, for organization)
+├── subject
+├── body_html
+├── body_text
+├── variables_used (JSONB array: ["firstName", "company"])
+├── is_shared (team can use)
+├── usage_count
+├── last_used_at
+├── created_at
+└── updated_at
+
+-- SIGNATURES
+signatures
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── user_id (FK)
+├── name
+├── content_html
+├── is_default
+├── created_at
+└── updated_at
+
+-- CAMPAIGNS
+campaigns
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── user_id (FK, creator)
+├── email_account_id (FK)
+├── name
+├── subject
+├── subject_b (for A/B testing)
+├── body_html
+├── body_html_b (for A/B testing)
+├── body_text
+├── from_name (override account default)
+├── reply_to (override)
+├── status (draft, scheduled, sending, paused, completed, cancelled, failed)
+├── send_at (nullable, for scheduled)
+├── timezone
+├── sending_window_start (time, e.g., 09:00)
+├── sending_window_end (time, e.g., 17:00)
+├── sending_days (JSONB array: ["mon", "tue", "wed", "thu", "fri"])
+├── min_delay_seconds (minimum delay between emails)
+├── max_delay_seconds (maximum delay between emails)
+├── batch_size (emails per batch, 0 = no batching)
+├── batch_delay_seconds (delay between batches)
+├── list_id (FK → contact_lists, nullable)
+├── segment_conditions (JSONB, for ad-hoc segments)
+├── ab_test_enabled
+├── ab_test_winner_criteria (open_rate, click_rate)
+├── ab_test_sample_size (percentage)
+├── ab_test_duration_hours
+├── ab_test_winner (a, b, nullable)
+├── track_opens
+├── track_clicks
+├── total_recipients
+├── sent_count
+├── delivered_count
+├── failed_count
+├── opened_count
+├── unique_opens
+├── clicked_count
+├── unique_clicks
+├── replied_count
+├── bounced_count
+├── unsubscribed_count
+├── complained_count
+├── visited_count (website visits from recipients)
+├── created_at
+├── started_at
+├── completed_at
+├── updated_at
+└── archived_at (nullable, soft archive)
+
+-- SEQUENCES
+sequences
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── user_id (FK, creator)
+├── email_account_id (FK, default account)
+├── name
+├── description
+├── status (draft, active, paused, archived)
+├── settings (JSONB: {stop_on_reply, stop_on_click, stop_on_visit, stop_on_score})
+├── stop_on_score_threshold (nullable, e.g., 50)
+├── sending_window_start
+├── sending_window_end
+├── sending_days (JSONB array)
+├── min_delay_seconds
+├── max_delay_seconds
+├── timezone
+├── total_enrolled
+├── active_count
+├── completed_count
+├── replied_count
+├── created_at
+├── updated_at
+└── archived_at
+
+sequence_steps
+├── id (UUID, PK)
+├── sequence_id (FK, indexed)
+├── step_number (1, 2, 3...)
+├── step_type (email, manual_task, condition)
+├── delay_days
+├── delay_hours
+├── delay_type (after_previous, specific_day)
+├── specific_days (JSONB array, for specific_day type)
+├── subject
+├── body_html
+├── body_text
+├── task_description (for manual_task type)
+├── condition_type (opened, clicked, replied, visited, score_above)
+├── condition_value (for score_above)
+├── condition_true_step (FK → sequence_steps, nullable)
+├── condition_false_step (FK → sequence_steps, nullable)
+├── track_opens
+├── track_clicks
+├── is_active
+├── sent_count
+├── opened_count
+├── clicked_count
+├── replied_count
+├── created_at
+└── updated_at
+
+sequence_enrollments
+├── id (UUID, PK)
+├── sequence_id (FK, indexed)
+├── contact_id (FK, indexed)
+├── email_account_id (FK, can override sequence default)
+├── current_step_id (FK → sequence_steps)
+├── status (active, paused, completed, replied, visited, unsubscribed, bounced, score_threshold, manually_stopped)
+├── enrolled_at
+├── enrolled_by (FK → users)
+├── next_step_at (indexed, for scheduler)
+├── paused_at
+├── completed_at
+├── stopped_reason
+├── created_at
+└── updated_at
+
+-- EMAILS (individual sent emails)
+emails
+├── id (UUID, PK)
+├── workspace_id (FK, indexed)
+├── campaign_id (FK, nullable, indexed)
+├── sequence_id (FK, nullable, indexed)
+├── sequence_step_id (FK, nullable)
+├── sequence_enrollment_id (FK, nullable)
+├── user_id (FK)
+├── email_account_id (FK)
+├── contact_id (FK, indexed)
+├── tracking_id (UUID, unique, indexed)
+├── to_email
+├── to_name
+├── from_email
+├── from_name
+├── reply_to
+├── subject
+├── body_html
+├── body_text
+├── headers (JSONB, custom headers)
+├── ab_variant (a, b, nullable)
+├── status (queued, sending, sent, delivered, failed, bounced)
+├── error_message (nullable)
+├── error_code (nullable)
+├── smtp_message_id (from SMTP response)
+├── scheduled_at (when to send)
+├── sent_at
+├── delivered_at
+├── first_opened_at
+├── last_opened_at
+├── first_clicked_at
+├── last_clicked_at
+├── replied_at
+├── bounced_at
+├── bounce_type (soft, hard)
+├── unsubscribed_at
+├── complained_at
+├── open_count
+├── click_count
+├── created_at
+└── updated_at
+
+-- TRACKING EVENTS
+tracking_events
+├── id (UUID, PK)
+├── workspace_id (FK, indexed)
+├── email_id (FK, indexed)
+├── campaign_id (FK, nullable, indexed)
+├── sequence_id (FK, nullable, indexed)
+├── contact_id (FK, indexed)
+├── event_type (sent, delivered, opened, clicked, replied, bounced, unsubscribed, complained)
+├── link_url (for clicks, indexed)
+├── link_id (for tracking specific links)
+├── ip_address (indexed, for visitor matching)
+├── user_agent
+├── device_type (desktop, mobile, tablet)
+├── os (Windows, macOS, iOS, Android, Linux)
+├── browser (Chrome, Firefox, Safari, Outlook)
+├── email_client (Gmail, Outlook, Apple Mail, etc.)
+├── is_bot (detected as bot/prefetch)
+├── country (from IP)
+├── region
+├── city
+├── latitude
+├── longitude
+├── score_awarded (points given for this event)
+├── created_at (indexed)
+
+-- VISITOR TRACKING (Website Intelligence)
+tracking_domains
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── domain (e.g., example.com)
+├── tracking_code (unique identifier for JS snippet)
+├── is_verified
+├── verified_at
+├── settings (JSONB: {track_scroll, track_time, anonymize_ip})
+├── created_at
+└── updated_at
+
+website_visitors
+├── id (UUID, PK)
+├── workspace_id (FK, indexed)
+├── tracking_domain_id (FK)
+├── visitor_id (UUID, from cookie, indexed)
+├── ip_address (indexed)
+├── matched_contact_id (FK → contacts, nullable, indexed)
+├── matched_at
+├── match_confidence (ip_exact, ip_partial, email_link)
+├── company_name (from IP enrichment)
+├── company_domain
+├── company_industry
+├── first_seen_at
+├── last_seen_at
+├── total_visits
+├── total_page_views
+├── total_time_seconds
+├── created_at
+└── updated_at
+
+visitor_sessions
+├── id (UUID, PK)
+├── visitor_id (FK → website_visitors, indexed)
+├── session_id (UUID)
+├── referrer
+├── utm_source
+├── utm_medium
+├── utm_campaign
+├── utm_term
+├── utm_content
+├── landing_page
+├── exit_page
+├── page_views
+├── duration_seconds
+├── device_type
+├── browser
+├── os
+├── country
+├── city
+├── started_at
+├── ended_at
+└── created_at
+
+visitor_page_views
+├── id (UUID, PK)
+├── visitor_id (FK, indexed)
+├── session_id (FK → visitor_sessions)
+├── contact_id (FK, nullable, if matched)
+├── page_url (indexed)
+├── page_title
+├── referrer
+├── time_on_page_seconds
+├── scroll_depth_percent
+├── score_awarded (points given for this page view)
+├── created_at
+
+-- WEBHOOKS
+webhook_endpoints
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── user_id (FK, creator)
+├── name
+├── url (indexed)
+├── events (JSONB array: ["email.sent", "email.opened", "contact.score_changed", ...])
+├── secret (for HMAC signature)
+├── headers (JSONB, custom headers to send)
+├── is_active
+├── last_triggered_at
+├── last_success_at
+├── last_failure_at
+├── success_count
+├── failure_count
+├── consecutive_failures
+├── created_at
+└── updated_at
+
+webhook_deliveries
+├── id (UUID, PK)
+├── endpoint_id (FK, indexed)
+├── event_type
+├── event_id (UUID, reference to source event)
+├── payload (JSONB)
+├── request_headers (JSONB)
+├── response_status
+├── response_headers (JSONB)
+├── response_body (text, truncated)
+├── response_time_ms
+├── attempt_number
+├── status (pending, success, failed, retrying)
+├── next_retry_at (nullable)
+├── created_at
+└── completed_at
+
+-- INTEGRATIONS
+integrations
+├── id (UUID, PK)
+├── workspace_id (FK)
+├── user_id (FK, who connected)
+├── provider (slack, hubspot, salesforce, pipedrive, google_sheets, n8n, zapier, etc.)
+├── name (user-friendly name)
+├── credentials (encrypted JSONB)
+├── settings (JSONB: mapping, sync options)
+├── status (connected, disconnected, error)
+├── last_synced_at
+├── last_error
+├── created_at
+└── updated_at
+
+integration_sync_logs
+├── id (UUID, PK)
+├── integration_id (FK)
+├── sync_type (full, incremental, webhook)
+├── direction (inbound, outbound)
+├── records_processed
+├── records_created
+├── records_updated
+├── records_failed
+├── errors (JSONB array)
+├── started_at
+├── completed_at
+├── status (running, completed, failed)
+└── created_at
+
+-- ACTIVITY LOG
+activity_logs
+├── id (UUID, PK)
+├── workspace_id (FK, indexed)
+├── user_id (FK, nullable - system actions)
+├── action (created, updated, deleted, sent, imported, exported, etc.)
+├── resource_type (contact, campaign, sequence, email_account, etc.)
+├── resource_id (UUID)
+├── resource_name (for display after deletion)
+├── changes (JSONB: {field: {old, new}})
+├── ip_address
+├── user_agent
+├── created_at
+
+-- SCHEDULED JOBS
+scheduled_jobs
+├── id (UUID, PK)
+├── workspace_id (FK, nullable)
+├── job_type (send_campaign, send_sequence_step, sync_integration, score_decay, etc.)
+├── job_id (Celery task ID)
+├── reference_type (campaign, sequence_enrollment, etc.)
+├── reference_id (UUID)
+├── scheduled_for
+├── started_at
+├── completed_at
+├── status (pending, running, completed, failed, cancelled)
+├── result (JSONB)
+├── error
+├── attempts
+├── created_at
+
+---
+
+5. API STRUCTURE
+
+API v1 Endpoints
+================
+
+Base URL: /api/v1/
+
+# Authentication
+POST   /auth/register/                     # Register new user
+POST   /auth/login/                        # Login, get JWT tokens
+POST   /auth/logout/                       # Logout, invalidate tokens
+POST   /auth/token/refresh/                # Refresh access token
+POST   /auth/password/reset/               # Request password reset
+POST   /auth/password/reset/confirm/       # Confirm password reset
+POST   /auth/password/change/              # Change password (authenticated)
+POST   /auth/email/verify/                 # Verify email address
+POST   /auth/email/resend/                 # Resend verification email
+GET    /auth/me/                           # Get current user
+PUT    /auth/me/                           # Update current user
+DELETE /auth/me/                           # Delete account
+GET    /auth/sessions/                     # List active sessions
+DELETE /auth/sessions/{id}/                # Revoke session
+
+# OAuth
+GET    /auth/oauth/google/                 # Initiate Google OAuth
+GET    /auth/oauth/google/callback/        # Google OAuth callback
+GET    /auth/oauth/microsoft/              # Initiate Microsoft OAuth
+GET    /auth/oauth/microsoft/callback/     # Microsoft OAuth callback
+
+# Two-Factor Authentication
+POST   /auth/2fa/enable/                   # Enable 2FA
+POST   /auth/2fa/verify/                   # Verify 2FA token
+POST   /auth/2fa/disable/                  # Disable 2FA
+GET    /auth/2fa/backup-codes/             # Get backup codes
+
+# API Keys
+GET    /api-keys/                          # List API keys
+POST   /api-keys/                          # Create API key
+GET    /api-keys/{id}/                     # Get API key details
+PUT    /api-keys/{id}/                     # Update API key
+DELETE /api-keys/{id}/                     # Revoke API key
+
+# Workspaces (Teams)
+GET    /workspaces/                        # List user's workspaces
+POST   /workspaces/                        # Create workspace
+GET    /workspaces/{id}/                   # Get workspace
+PUT    /workspaces/{id}/                   # Update workspace
+DELETE /workspaces/{id}/                   # Delete workspace
+GET    /workspaces/{id}/members/           # List members
+POST   /workspaces/{id}/members/           # Invite member
+PUT    /workspaces/{id}/members/{user_id}/ # Update member role
+DELETE /workspaces/{id}/members/{user_id}/ # Remove member
+POST   /workspaces/{id}/invites/           # Create invite
+GET    /workspaces/{id}/invites/           # List pending invites
+DELETE /workspaces/{id}/invites/{id}/      # Cancel invite
+POST   /workspaces/join/{token}/           # Accept invite
+
+# Email Accounts
+GET    /email-accounts/                    # List email accounts
+POST   /email-accounts/                    # Add email account (SMTP)
+GET    /email-accounts/{id}/               # Get account details
+PUT    /email-accounts/{id}/               # Update account
+DELETE /email-accounts/{id}/               # Delete account
+POST   /email-accounts/{id}/test/          # Test connection
+POST   /email-accounts/{id}/send-test/     # Send test email
+GET    /email-accounts/{id}/stats/         # Get sending stats
+POST   /email-accounts/oauth/gmail/        # Connect Gmail via OAuth
+POST   /email-accounts/oauth/outlook/      # Connect Outlook via OAuth
+POST   /email-accounts/{id}/refresh-oauth/ # Refresh OAuth tokens
+
+# Tags
+GET    /tags/                              # List all tags
+POST   /tags/                              # Create tag
+GET    /tags/{id}/                         # Get tag
+PUT    /tags/{id}/                         # Update tag
+DELETE /tags/{id}/                         # Delete tag
+GET    /tags/{id}/contacts/                # Get contacts with tag
+
+# Contacts
+GET    /contacts/                          # List contacts (paginated, filterable)
+POST   /contacts/                          # Create contact
+GET    /contacts/{id}/                     # Get contact
+PUT    /contacts/{id}/                     # Update contact
+DELETE /contacts/{id}/                     # Delete contact
+POST   /contacts/bulk-create/              # Bulk create contacts
+POST   /contacts/bulk-update/              # Bulk update contacts
+POST   /contacts/bulk-delete/              # Bulk delete contacts
+POST   /contacts/bulk-tag/                 # Bulk add/remove tags
+POST   /contacts/import/                   # Import from CSV/Excel
+GET    /contacts/import/{job_id}/          # Get import status
+GET    /contacts/export/                   # Export contacts
+GET    /contacts/{id}/activity/            # Get contact activity timeline
+GET    /contacts/{id}/emails/              # Get emails sent to contact
+GET    /contacts/{id}/score-history/       # Get score history
+POST   /contacts/{id}/score/adjust/        # Manually adjust score
+POST   /contacts/search/                   # Advanced search
+POST   /contacts/merge/                    # Merge duplicate contacts
+GET    /contacts/hot-leads/                # Get high-score contacts
+
+# Contact Lists
+GET    /lists/                             # List all lists
+POST   /lists/                             # Create list
+GET    /lists/{id}/                        # Get list
+PUT    /lists/{id}/                        # Update list
+DELETE /lists/{id}/                        # Delete list
+GET    /lists/{id}/contacts/               # Get contacts in list
+POST   /lists/{id}/contacts/               # Add contacts to list
+DELETE /lists/{id}/contacts/               # Remove contacts from list
+POST   /lists/{id}/contacts/bulk/          # Bulk add contacts
+
+# Scoring Rules
+GET    /scoring-rules/                     # List scoring rules
+POST   /scoring-rules/                     # Create rule
+GET    /scoring-rules/{id}/                # Get rule
+PUT    /scoring-rules/{id}/                # Update rule
+DELETE /scoring-rules/{id}/                # Delete rule
+POST   /scoring-rules/reset-scores/        # Reset all contact scores
+
+# Unsubscribes (Suppression List)
+GET    /unsubscribes/                      # List unsubscribed emails
+POST   /unsubscribes/                      # Add to unsubscribe list
+DELETE /unsubscribes/{id}/                 # Remove from unsubscribe list
+POST   /unsubscribes/bulk/                 # Bulk add unsubscribes
+POST   /unsubscribes/check/                # Check if email is unsubscribed
+
+# Templates
+GET    /templates/                         # List templates
+POST   /templates/                         # Create template
+GET    /templates/{id}/                    # Get template
+PUT    /templates/{id}/                    # Update template
+DELETE /templates/{id}/                    # Delete template
+POST   /templates/{id}/duplicate/          # Duplicate template
+POST   /templates/preview/                 # Preview with variables
+
+# Signatures
+GET    /signatures/                        # List signatures
+POST   /signatures/                        # Create signature
+GET    /signatures/{id}/                   # Get signature
+PUT    /signatures/{id}/                   # Update signature
+DELETE /signatures/{id}/                   # Delete signature
+
+# Campaigns
+GET    /campaigns/                         # List campaigns
+POST   /campaigns/                         # Create campaign
+GET    /campaigns/{id}/                    # Get campaign
+PUT    /campaigns/{id}/                    # Update campaign
+DELETE /campaigns/{id}/                    # Delete campaign
+POST   /campaigns/{id}/duplicate/          # Duplicate campaign
+POST   /campaigns/{id}/send/               # Start sending immediately
+POST   /campaigns/{id}/schedule/           # Schedule campaign
+POST   /campaigns/{id}/pause/              # Pause sending
+POST   /campaigns/{id}/resume/             # Resume sending
+POST   /campaigns/{id}/cancel/             # Cancel campaign
+POST   /campaigns/{id}/send-test/          # Send test email
+GET    /campaigns/{id}/stats/              # Get campaign statistics
+GET    /campaigns/{id}/emails/             # Get sent emails
+GET    /campaigns/{id}/activity/           # Get activity feed
+GET    /campaigns/{id}/opens/              # Get opens detail
+GET    /campaigns/{id}/clicks/             # Get clicks detail
+GET    /campaigns/{id}/replies/            # Get replies
+GET    /campaigns/{id}/bounces/            # Get bounces
+GET    /campaigns/{id}/visits/             # Get website visits from recipients
+POST   /campaigns/{id}/recipients/preview/ # Preview recipients
+
+# Sequences
+GET    /sequences/                         # List sequences
+POST   /sequences/                         # Create sequence
+GET    /sequences/{id}/                    # Get sequence
+PUT    /sequences/{id}/                    # Update sequence
+DELETE /sequences/{id}/                    # Delete sequence
+POST   /sequences/{id}/duplicate/          # Duplicate sequence
+POST   /sequences/{id}/activate/           # Activate sequence
+POST   /sequences/{id}/pause/              # Pause sequence
+POST   /sequences/{id}/archive/            # Archive sequence
+GET    /sequences/{id}/steps/              # Get steps
+POST   /sequences/{id}/steps/              # Add step
+PUT    /sequences/{id}/steps/{step_id}/    # Update step
+DELETE /sequences/{id}/steps/{step_id}/    # Delete step
+POST   /sequences/{id}/steps/reorder/      # Reorder steps
+GET    /sequences/{id}/enrollments/        # Get enrollments
+POST   /sequences/{id}/enroll/             # Enroll contacts
+POST   /sequences/{id}/enroll/bulk/        # Bulk enroll
+GET    /sequences/{id}/stats/              # Get sequence stats
+GET    /sequences/enrollments/{id}/        # Get enrollment details
+PUT    /sequences/enrollments/{id}/        # Update enrollment
+POST   /sequences/enrollments/{id}/pause/  # Pause enrollment
+POST   /sequences/enrollments/{id}/resume/ # Resume enrollment
+POST   /sequences/enrollments/{id}/stop/   # Stop enrollment
+
+# Tracking (Public endpoints, no auth)
+GET    /t/o/{tracking_id}.gif              # Open tracking pixel
+GET    /t/c/{tracking_id}/{link_id}/       # Click tracking redirect
+GET    /t/u/{tracking_id}/                 # Unsubscribe page
+POST   /t/u/{tracking_id}/                 # Process unsubscribe
+
+# Visitor Tracking
+GET    /tracking/domains/                  # List tracking domains
+POST   /tracking/domains/                  # Add tracking domain
+GET    /tracking/domains/{id}/             # Get domain
+PUT    /tracking/domains/{id}/             # Update domain
+DELETE /tracking/domains/{id}/             # Delete domain
+GET    /tracking/domains/{id}/snippet/     # Get JS snippet code
+POST   /tracking/domains/{id}/verify/      # Verify domain ownership
+GET    /tracking/visitors/                 # List visitors
+GET    /tracking/visitors/{id}/            # Get visitor details
+GET    /tracking/visitors/{id}/sessions/   # Get visitor sessions
+GET    /tracking/visitors/{id}/pages/      # Get page views
+GET    /tracking/visitors/matched/         # Get matched visitors only
+POST   /tracking/visit/                    # Record visit (from JS, public)
+
+# Webhooks
+GET    /webhooks/                          # List webhook endpoints
+POST   /webhooks/                          # Create webhook
+GET    /webhooks/{id}/                     # Get webhook
+PUT    /webhooks/{id}/                     # Update webhook
+DELETE /webhooks/{id}/                     # Delete webhook
+POST   /webhooks/{id}/test/                # Send test event
+GET    /webhooks/{id}/deliveries/          # Get delivery logs
+POST   /webhooks/{id}/deliveries/{did}/retry/  # Retry delivery
+GET    /webhooks/events/                   # List available events
+
+# Integrations
+GET    /integrations/                      # List integrations
+GET    /integrations/available/            # List available integrations
+POST   /integrations/                      # Connect integration
+GET    /integrations/{id}/                 # Get integration
+PUT    /integrations/{id}/                 # Update integration
+DELETE /integrations/{id}/                 # Disconnect integration
+POST   /integrations/{id}/sync/            # Trigger sync
+GET    /integrations/{id}/logs/            # Get sync logs
+
+# Integration-specific endpoints
+POST   /integrations/slack/test/           # Test Slack notification
+POST   /integrations/hubspot/sync/         # Sync with HubSpot
+POST   /integrations/google-sheets/export/ # Export to Google Sheets
+
+# Dashboard & Reports
+GET    /dashboard/stats/                   # Get dashboard statistics
+GET    /dashboard/activity/                # Get recent activity
+GET    /dashboard/performance/             # Get performance over time
+GET    /dashboard/hot-leads/               # Get hottest leads (high score)
+GET    /reports/campaigns/                 # Campaign comparison report
+GET    /reports/sequences/                 # Sequence performance report
+GET    /reports/contacts/                  # Contact engagement report
+GET    /reports/email-accounts/            # Account performance report
+GET    /reports/deliverability/            # Deliverability report
+GET    /reports/scoring/                   # Score distribution report
+POST   /reports/export/                    # Export report
+
+# Activity Log
+GET    /activity/                          # Get activity log
+
+# Settings
+GET    /settings/                          # Get workspace settings
+PUT    /settings/                          # Update workspace settings
+GET    /settings/notifications/            # Get notification settings
+PUT    /settings/notifications/            # Update notification settings
+GET    /settings/scoring/                  # Get scoring settings
+PUT    /settings/scoring/                  # Update scoring settings
+
+# Utilities
+POST   /utils/check-email/                 # Validate email format
+POST   /utils/check-spam-score/            # Check spam score
+POST   /utils/check-domain/                # Check domain SPF/DKIM/DMARC
+POST   /utils/preview-template/            # Preview template with variables
+GET    /utils/timezones/                   # List available timezones
+
+---
+
+6. FOLDER STRUCTURE
+
+coldmail/
+├── docker-compose.yml              # One command production deploy
+├── docker-compose.dev.yml          # Development environment
+├── docker-compose.test.yml         # Testing environment
+├── Dockerfile                      # Backend container
+├── Dockerfile.frontend             # Frontend container
+├── .env.example                    # Environment template
+├── .env.development                # Development defaults
+├── .gitignore
+├── README.md                       # Main documentation
+├── LICENSE                         # MIT License
+├── CONTRIBUTING.md                 # Contribution guide
+├── CHANGELOG.md                    # Version history
+├── Makefile                        # Common commands
+│
+├── backend/                        # Django Backend
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── requirements-dev.txt
+│   ├── pyproject.toml
+│   ├── pytest.ini
+│   ├── .flake8
+│   ├── .pre-commit-config.yaml
+│   │
+│   ├── coldmail/                   # Main Django project
+│   │   ├── __init__.py
+│   │   ├── settings/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   ├── development.py
+│   │   │   ├── production.py
+│   │   │   └── testing.py
+│   │   ├── urls.py
+│   │   ├── celery.py
+│   │   ├── wsgi.py
+│   │   └── asgi.py
+│   │
+│   ├── apps/
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── core/                   # Shared utilities
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py           # Base models (UUIDModel, etc.)
+│   │   │   ├── permissions.py
+│   │   │   ├── pagination.py
+│   │   │   ├── exceptions.py
+│   │   │   ├── throttling.py
+│   │   │   ├── encryption.py
+│   │   │   └── utils.py
+│   │   │
+│   │   ├── users/                  # User management
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── managers.py
+│   │   │   ├── signals.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── workspaces/             # Team/Workspace management
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── permissions.py
+│   │   │   ├── middleware.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── api_keys/               # API key management
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── authentication.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── email_accounts/         # SMTP/OAuth configs
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── providers/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── base.py
+│   │   │   │   ├── gmail.py
+│   │   │   │   ├── outlook.py
+│   │   │   │   └── smtp.py
+│   │   │   ├── tasks.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── contacts/               # Contact management
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── filters.py
+│   │   │   ├── importers/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── base.py
+│   │   │   │   ├── csv_importer.py
+│   │   │   │   ├── excel_importer.py
+│   │   │   │   └── json_importer.py
+│   │   │   ├── exporters/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── csv_exporter.py
+│   │   │   │   └── excel_exporter.py
+│   │   │   ├── tasks.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── scoring/                # Contact scoring system
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── engine.py           # Scoring logic
+│   │   │   ├── tasks.py            # Score decay, recalculation
+│   │   │   └── tests/
+│   │   │
+│   │   ├── templates_email/        # Email templates
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── renderer.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── campaigns/              # Campaigns & sending
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── tasks.py
+│   │   │   ├── sender.py
+│   │   │   ├── scheduler.py
+│   │   │   ├── ab_testing.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── sequences/              # Email sequences
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── tasks.py
+│   │   │   ├── engine.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── emails/                 # Individual emails
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── tracking/               # Open/click tracking
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── utils.py
+│   │   │   ├── bot_detection.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── visitors/               # Website visitor tracking
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── matcher.py
+│   │   │   ├── enrichment.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── unsubscribes/           # Unsubscribe management
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── webhooks/               # Webhook system
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── dispatcher.py
+│   │   │   ├── signer.py
+│   │   │   ├── tasks.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── integrations/           # Third-party integrations
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   ├── admin.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── tasks.py
+│   │   │   ├── providers/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── base.py
+│   │   │   │   ├── slack.py
+│   │   │   │   ├── discord.py
+│   │   │   │   ├── hubspot.py
+│   │   │   │   ├── salesforce.py
+│   │   │   │   ├── pipedrive.py
+│   │   │   │   ├── google_sheets.py
+│   │   │   │   ├── airtable.py
+│   │   │   │   └── calendly.py
+│   │   │   └── tests/
+│   │   │
+│   │   ├── reports/                # Reports & analytics
+│   │   │   ├── __init__.py
+│   │   │   ├── serializers.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   ├── generators/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── campaign_report.py
+│   │   │   │   ├── sequence_report.py
+│   │   │   │   ├── scoring_report.py
+│   │   │   │   └── deliverability_report.py
+│   │   │   └── exporters/
+│   │   │       ├── __init__.py
+│   │   │       ├── csv_exporter.py
+│   │   │       ├── excel_exporter.py
+│   │   │       └── pdf_exporter.py
+│   │   │
+│   │   ├── dashboard/              # Dashboard API
+│   │   │   ├── __init__.py
+│   │   │   ├── views.py
+│   │   │   ├── urls.py
+│   │   │   └── serializers.py
+│   │   │
+│   │   └── activity/               # Activity logging
+│   │       ├── __init__.py
+│   │       ├── models.py
+│   │       ├── admin.py
+│   │       ├── serializers.py
+│   │       ├── views.py
+│   │       ├── urls.py
+│   │       ├── middleware.py
+│   │       └── signals.py
+│   │
+│   ├── services/                   # Shared services
+│   │   ├── __init__.py
+│   │   ├── email_sender.py
+│   │   ├── template_renderer.py
+│   │   ├── geolocation.py
+│   │   ├── device_detector.py
+│   │   └── spam_checker.py
+│   │
+│   └── templates/                  # Django templates
+│       ├── emails/
+│       │   ├── base.html
+│       │   ├── welcome.html
+│       │   ├── password_reset.html
+│       │   └── invite.html
+│       └── tracking/
+│           └── unsubscribe.html
+│
+├── frontend/                       # React Frontend
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── vite.config.ts
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── .eslintrc.cjs
+│   ├── .prettierrc
+│   ├── index.html
+│   │
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   ├── logo.svg
+│   │   └── robots.txt
+│   │
+│   └── src/
+│       ├── main.tsx
+│       ├── App.tsx
+│       ├── index.css
+│       ├── vite-env.d.ts
+│       │
+│       ├── components/
+│       │   ├── ui/                 # shadcn/ui components
+│       │   ├── layout/
+│       │   │   ├── Header.tsx
+│       │   │   ├── Sidebar.tsx
+│       │   │   ├── Layout.tsx
+│       │   │   ├── MobileNav.tsx
+│       │   │   └── BreadCrumbs.tsx
+│       │   ├── common/
+│       │   │   ├── DataTable.tsx
+│       │   │   ├── EmptyState.tsx
+│       │   │   ├── LoadingSpinner.tsx
+│       │   │   ├── ErrorBoundary.tsx
+│       │   │   ├── Pagination.tsx
+│       │   │   ├── SearchInput.tsx
+│       │   │   ├── FilterDropdown.tsx
+│       │   │   ├── DateRangePicker.tsx
+│       │   │   ├── ConfirmDialog.tsx
+│       │   │   └── StatsCard.tsx
+│       │   ├── auth/
+│       │   ├── contacts/
+│       │   │   ├── ContactsTable.tsx
+│       │   │   ├── ContactForm.tsx
+│       │   │   ├── ContactDetail.tsx
+│       │   │   ├── ContactImport.tsx
+│       │   │   ├── TagManager.tsx
+│       │   │   ├── ListManager.tsx
+│       │   │   ├── ContactActivity.tsx
+│       │   │   ├── ContactScore.tsx
+│       │   │   └── HotLeadsTable.tsx
+│       │   ├── campaigns/
+│       │   ├── sequences/
+│       │   ├── templates/
+│       │   ├── email-accounts/
+│       │   ├── tracking/
+│       │   ├── reports/
+│       │   ├── webhooks/
+│       │   ├── integrations/
+│       │   ├── settings/
+│       │   └── editor/
+│       │       ├── RichTextEditor.tsx
+│       │       ├── VariableInserter.tsx
+│       │       ├── SpintaxHelper.tsx
+│       │       ├── HtmlEditor.tsx
+│       │       └── PreviewPane.tsx
+│       │
+│       ├── pages/
+│       │   ├── auth/
+│       │   ├── DashboardPage.tsx
+│       │   ├── ContactsPage.tsx
+│       │   ├── ContactDetailPage.tsx
+│       │   ├── HotLeadsPage.tsx
+│       │   ├── CampaignsPage.tsx
+│       │   ├── CampaignDetailPage.tsx
+│       │   ├── NewCampaignPage.tsx
+│       │   ├── SequencesPage.tsx
+│       │   ├── SequenceBuilderPage.tsx
+│       │   ├── SequenceDetailPage.tsx
+│       │   ├── TemplatesPage.tsx
+│       │   ├── EmailAccountsPage.tsx
+│       │   ├── TrackingPage.tsx
+│       │   ├── VisitorDetailPage.tsx
+│       │   ├── ReportsPage.tsx
+│       │   ├── WebhooksPage.tsx
+│       │   ├── IntegrationsPage.tsx
+│       │   ├── SettingsPage.tsx
+│       │   ├── ScoringSettingsPage.tsx
+│       │   ├── TeamPage.tsx
+│       │   ├── ApiKeysPage.tsx
+│       │   ├── ActivityLogPage.tsx
+│       │   └── NotFoundPage.tsx
+│       │
+│       ├── hooks/
+│       │   ├── useAuth.ts
+│       │   ├── useWorkspace.ts
+│       │   ├── useContacts.ts
+│       │   ├── useCampaigns.ts
+│       │   ├── useSequences.ts
+│       │   ├── useTemplates.ts
+│       │   ├── useEmailAccounts.ts
+│       │   ├── useVisitors.ts
+│       │   ├── useWebhooks.ts
+│       │   ├── useIntegrations.ts
+│       │   ├── useScoring.ts
+│       │   ├── useDebounce.ts
+│       │   ├── useLocalStorage.ts
+│       │   └── usePagination.ts
+│       │
+│       ├── api/
+│       │   ├── client.ts
+│       │   ├── auth.ts
+│       │   ├── workspaces.ts
+│       │   ├── contacts.ts
+│       │   ├── campaigns.ts
+│       │   ├── sequences.ts
+│       │   ├── templates.ts
+│       │   ├── emailAccounts.ts
+│       │   ├── tracking.ts
+│       │   ├── webhooks.ts
+│       │   ├── integrations.ts
+│       │   ├── scoring.ts
+│       │   ├── reports.ts
+│       │   └── settings.ts
+│       │
+│       ├── stores/
+│       │   ├── authStore.ts
+│       │   ├── workspaceStore.ts
+│       │   ├── uiStore.ts
+│       │   └── notificationStore.ts
+│       │
+│       ├── lib/
+│       │   ├── utils.ts
+│       │   ├── constants.ts
+│       │   ├── validations.ts
+│       │   └── formatters.ts
+│       │
+│       ├── types/
+│       │   └── index.ts
+│       │
+│       └── router/
+│           ├── index.tsx
+│           ├── PrivateRoute.tsx
+│           └── routes.ts
+│
+├── tracking-script/                # Website tracking JS
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── rollup.config.js
+│   ├── src/
+│   │   └── tracker.ts
+│   ├── dist/
+│   │   ├── coldmail.js
+│   │   └── coldmail.min.js
+│   └── README.md
+│
+├── scripts/
+│   ├── setup.sh
+│   ├── dev.sh
+│   ├── build.sh
+│   ├── backup.sh
+│   ├── restore.sh
+│   ├── migrate.sh
+│   └── seed.sh
+│
+├── nginx/
+│   ├── nginx.conf
+│   ├── nginx.dev.conf
+│   └── ssl/
+│
+├── docs/
+│   ├── getting-started.md
+│   ├── installation.md
+│   ├── configuration.md
+│   ├── api-reference.md
+│   ├── self-hosting.md
+│   ├── integrations.md
+│   ├── webhooks.md
+│   ├── tracking.md
+│   ├── sequences.md
+│   ├── scoring.md
+│   ├── troubleshooting.md
+│   └── contributing.md
+│
+└── .github/
+    ├── workflows/
+    │   ├── ci.yml
+    │   ├── build.yml
+    │   └── release.yml
+    ├── ISSUE_TEMPLATE/
+    ├── PULL_REQUEST_TEMPLATE.md
+    └── CODEOWNERS
+
+---
+
+7. DEPLOYMENT
+
+Single VM Architecture
+
+┌────────────────────────────────────────────────┐
+│              VM ($10-20/month)                 │
+│              2-4GB RAM, 1-2 vCPU               │
+│                                                │
+│  ┌──────────────────────────────────────────┐  │
+│  │              Nginx                        │  │
+│  │     (reverse proxy + static files)        │  │
+│  │         :80/:443 → Django :8000           │  │
+│  └──────────────────────────────────────────┘  │
+│                      │                         │
+│  ┌──────────────────────────────────────────┐  │
+│  │         Django + Gunicorn                 │  │
+│  │            (4 workers)                    │  │
+│  └──────────────────────────────────────────┘  │
+│                      │                         │
+│  ┌──────────────────────────────────────────┐  │
+│  │      Celery Worker + Beat                 │  │
+│  │   (background jobs + scheduler)           │  │
+│  └──────────────────────────────────────────┘  │
+│                      │                         │
+│  ┌───────────────┐   ┌───────────────────────┐ │
+│  │    Redis      │   │     PostgreSQL        │ │
+│  │   (queue +    │   │      (database)       │ │
+│  │    cache)     │   │                       │ │
+│  └───────────────┘   └───────────────────────┘ │
+└────────────────────────────────────────────────┘
+
+Docker Compose (Production)
+
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - coldmail
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: gunicorn coldmail.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 2
+    environment:
+      - DJANGO_SETTINGS_MODULE=coldmail.settings.production
+      - DATABASE_URL=postgres://coldmail:${DB_PASSWORD}@db:5432/coldmail
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - coldmail
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A coldmail worker -l info --concurrency=4
+    environment:
+      - DJANGO_SETTINGS_MODULE=coldmail.settings.production
+      - DATABASE_URL=postgres://coldmail:${DB_PASSWORD}@db:5432/coldmail
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    depends_on:
+      - backend
+      - redis
+    restart: unless-stopped
+    networks:
+      - coldmail
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A coldmail beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    environment:
+      - DJANGO_SETTINGS_MODULE=coldmail.settings.production
+      - DATABASE_URL=postgres://coldmail:${DB_PASSWORD}@db:5432/coldmail
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      - backend
+      - redis
+    restart: unless-stopped
+    networks:
+      - coldmail
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      - POSTGRES_DB=coldmail
+      - POSTGRES_USER=coldmail
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - coldmail
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coldmail -d coldmail"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - coldmail
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - coldmail
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+
+networks:
+  coldmail:
+    driver: bridge
+
+---
+
+8. DEVELOPMENT PHASES
+
+Phase 1: Foundation
+
+- Project setup (Django, React, Docker)
+- PostgreSQL + Redis configuration
+- User authentication (django-allauth)
+- JWT token authentication
+- OAuth login (Google, Microsoft)
+- Basic React setup with routing
+- shadcn/ui component library
+- Docker development environment
+- CI/CD pipeline setup
+
+Phase 2: Email Infrastructure
+
+- Email account model (SMTP, OAuth)
+- Gmail OAuth integration
+- Microsoft OAuth integration
+- SMTP provider support
+- Connection testing
+- Account health monitoring
+- Daily/hourly limit tracking
+- Email account UI
+
+Phase 3: Contacts System
+
+- Contact model with custom fields
+- Tags system
+- Contact lists (static and smart)
+- Import from CSV/Excel/JSON
+- Export functionality
+- Duplicate detection
+- Advanced search and filtering
+- Bulk operations
+- Contacts UI
+
+Phase 4: Contact Scoring
+
+- Scoring engine
+- Scoring rules configuration
+- Score history tracking
+- Hot/Warm/Cold classification
+- Score decay job
+- Hot leads dashboard
+- Scoring settings UI
+
+Phase 5: Templates & Composer
+
+- Email template model
+- Rich text editor (TipTap)
+- Variable system {{firstName}}
+- Spintax support
+- Template preview
+- Signature management
+- Templates UI
+
+Phase 6: Campaigns
+
+- Campaign model
+- Recipient selection
+- Sending queue (Celery)
+- Random delay between emails
+- Batch sending with delays
+- Schedule sending
+- Spread across time window
+- Respect limits
+- Pause/resume/cancel
+- A/B testing
+- Campaign UI
+
+Phase 7: Tracking
+
+- Open tracking (pixel)
+- Click tracking (redirect)
+- Event storage
+- Device/location detection
+- Bot filtering
+- Score awarding on events
+- Real-time updates
+- Unsubscribe handling
+- Bounce handling
+
+Phase 8: Reports & Dashboard
+
+- Dashboard statistics
+- Campaign reports
+- Activity timeline
+- Performance charts
+- Hot leads report
+- Score distribution
+- Export to CSV/Excel/PDF
+- Reports UI
+
+Phase 9: Sequences
+
+- Sequence model
+- Step builder
+- Delay configuration
+- Stop conditions (reply, click, visit, score threshold)
+- Enrollment management
+- Sequence engine (Celery)
+- Sequence analytics
+- Sequences UI
+
+Phase 10: Website Tracking
+
+- Tracking domain setup
+- JavaScript snippet
+- Visitor tracking
+- Page view recording
+- IP matching
+- Score awarding for visits
+- Company enrichment
+- Visitors UI
+
+Phase 11: API & Webhooks
+
+- REST API (all endpoints)
+- API key authentication
+- Rate limiting
+- Webhook system
+- Event dispatching
+- HMAC signing
+- Delivery logs
+- Retry logic
+- API documentation (Swagger)
+
+Phase 12: Integrations
+
+- Integration framework
+- Slack notifications
+- Discord notifications
+- HubSpot sync
+- Salesforce sync
+- Google Sheets export
+- n8n compatibility
+- Zapier webhooks
+
+Phase 13: Teams & Polish
+
+- Workspace/team model
+- Role-based access
+- Member invitations
+- Shared resources
+- Activity logging
+- Settings pages
+- Documentation
+- Performance optimization
+
+---
+
+9. ENVIRONMENT VARIABLES
+
+# .env.example
+
+# ===================
+# Django Settings
+# ===================
+DEBUG=False
+SECRET_KEY=your-secret-key-here-min-50-chars
+ALLOWED_HOSTS=localhost,yourdomain.com
+CSRF_TRUSTED_ORIGINS=https://yourdomain.com
+CORS_ALLOWED_ORIGINS=https://yourdomain.com
+
+# ===================
+# Database
+# ===================
+DATABASE_URL=postgres://coldmail:password@localhost:5432/coldmail
+DB_NAME=coldmail
+DB_USER=coldmail
+DB_PASSWORD=your-secure-password
+DB_HOST=localhost
+DB_PORT=5432
+
+# ===================
+# Redis
+# ===================
+REDIS_URL=redis://localhost:6379/0
+CELERY_BROKER_URL=redis://localhost:6379/1
+
+# ===================
+# Email (System emails)
+# ===================
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your@email.com
+EMAIL_HOST_PASSWORD=app-password
+EMAIL_USE_TLS=True
+DEFAULT_FROM_EMAIL=ColdMail <noreply@yourdomain.com>
+
+# ===================
+# OAuth - Google
+# ===================
+GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=xxx
+
+# ===================
+# OAuth - Microsoft
+# ===================
+MICROSOFT_CLIENT_ID=xxx
+MICROSOFT_CLIENT_SECRET=xxx
+MICROSOFT_TENANT_ID=common
+
+# ===================
+# Security
+# ===================
+ENCRYPTION_KEY=your-32-byte-fernet-key-here
+JWT_SECRET_KEY=your-jwt-secret-key
+JWT_ACCESS_TOKEN_LIFETIME=60
+JWT_REFRESH_TOKEN_LIFETIME=7
+
+# ===================
+# URLs
+# ===================
+FRONTEND_URL=https://yourdomain.com
+BACKEND_URL=https://api.yourdomain.com
+TRACKING_DOMAIN=https://t.yourdomain.com
+
+# ===================
+# Tracking
+# ===================
+GEOIP_DATABASE_PATH=/path/to/GeoLite2-City.mmdb
+ENABLE_BOT_DETECTION=True
+
+# ===================
+# Scoring (Defaults)
+# ===================
+SCORE_EMAIL_OPENED=5
+SCORE_LINK_CLICKED=10
+SCORE_WEBSITE_VISIT=15
+SCORE_PAGE_VIEW=3
+SCORE_REPLY=25
+SCORE_DECAY_DAYS=30
+SCORE_DECAY_PERCENT=10
+
+# ===================
+# Integrations (Optional)
+# ===================
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxx
+HUBSPOT_API_KEY=xxx
+SALESFORCE_CLIENT_ID=xxx
+SALESFORCE_CLIENT_SECRET=xxx
+GOOGLE_SHEETS_CREDENTIALS_PATH=/path/to/credentials.json
+
+# ===================
+# Monitoring (Optional)
+# ===================
+SENTRY_DSN=https://xxx@sentry.io/xxx
+LOG_LEVEL=INFO
+
+# ===================
+# Rate Limiting
+# ===================
+RATE_LIMIT_ENABLED=True
+API_RATE_LIMIT=1000/hour
+TRACKING_RATE_LIMIT=10000/hour
+
+---
+
+10. WHAT MAKES IT DIFFERENT
+
+vs Mautic / Listmonk
+
+- Purpose-built for cold email (not marketing automation)
+- Modern stack (Python/React, not PHP)
+- Better UX and UI
+- Simpler to self-host
+- Active sequence support
+- Contact scoring system
+
+vs Lemlist / Instantly / Mailshake / Smartlead
+
+- Free and open source
+- Self-hosted (own your data)
+- No monthly fees ($0 vs $50-500/month)
+- No email limits (besides your own infrastructure)
+- Full API access
+- Community-driven development
+- White-label ready
+
+vs Custom Solutions
+
+- Production-ready out of the box
+- Maintained and updated
+- Community support
+- Battle-tested architecture
+- Complete feature set
+
+Key Differentiators
+
+- Contact Scoring System (gamification)
+  - Auto-score based on engagement
+  - Hot/Warm/Cold lead classification
+  - Configurable scoring rules
+  - Score-based automation triggers
+
+- Website Visitor IP Matching
+  - Know when recipients visit your site
+  - Full page view tracking
+  - Score points for visits
+
+- Smart Sending Controls
+  - Random delays between emails
+  - Batch sending with batch delays
+  - Time window spreading
+  - Multi-account rotation
+
+- Full API + Webhooks
+  - Integrate with n8n, Zapier, Make
+  - All events available via webhooks
+  - Complete API coverage
+
+- Self-hosted
+  - GDPR compliant
+  - Own your data
+  - No vendor lock-in
+
+- Open Source
+  - Audit the code
+  - Contribute features
+  - Customize freely
+
+- Modern UI
+  - Clean, beautiful interface
+  - Not enterprise ugly
+  - Mobile responsive
+
+---
+
+11. PROJECT NAME: ColdMail
+
+ColdMail - Simple, powerful, open source cold email.
+
+Repository: github.com/yourusername/coldmail
+License: MIT
+Website: coldmail.io (TBD)
+
+---
+
+12. GETTING STARTED
+
+Quick Start (Development)
+
+# Clone the repository
+git clone https://github.com/yourusername/coldmail.git
+cd coldmail
+
+# Copy environment file
+cp .env.example .env.development
+
+# Start development environment
+docker-compose -f docker-compose.dev.yml up -d
+
+# Run migrations
+docker-compose exec backend python manage.py migrate
+
+# Create superuser
+docker-compose exec backend python manage.py createsuperuser
+
+# Access the app
+# Frontend: http://localhost:5173
+# Backend API: http://localhost:8000
+# Django Admin: http://localhost:8000/admin
+
+Production Deployment
+
+# Clone and configure
+git clone https://github.com/yourusername/coldmail.git
+cd coldmail
+cp .env.example .env
+
+# Edit .env with your production values
+nano .env
+
+# Start production stack
+docker-compose up -d
+
+# Run migrations
+docker-compose exec backend python manage.py migrate
+
+# Collect static files
+docker-compose exec backend python manage.py collectstatic --noinput
+
+# Access your instance
+# https://yourdomain.com
+
+---
+
+NEXT STEPS
+
+Ready to build:
+
+1. Initialize git repository
+2. Set up Django project structure
+3. Set up React frontend with Vite
+4. Configure Docker development environment
+5. Implement authentication
+6. Build from Phase 1 forward
+
+Let's build the best open source cold email platform.
