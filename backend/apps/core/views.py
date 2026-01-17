@@ -7,6 +7,19 @@ from rest_framework.response import Response
 from apps.core.services import ReportsService
 
 
+def get_workspace_id(request):
+    """Get workspace ID from header or user's first workspace."""
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
+    if not workspace_id:
+        # Fall back to user's first workspace
+        workspace = request.user.workspaces.first()
+        if workspace:
+            workspace_id = str(workspace.id)
+    return workspace_id
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def dashboard_stats(request):
@@ -16,7 +29,9 @@ def dashboard_stats(request):
     Query params:
         - days: Number of days to look back (default: 30)
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     days = int(request.query_params.get('days', 30))
 
     service = ReportsService(workspace_id)
@@ -35,7 +50,9 @@ def email_stats_over_time(request):
         - days: Number of days (default: 30)
         - granularity: 'hour', 'day', 'week', 'month' (default: 'day')
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     days = int(request.query_params.get('days', 30))
     granularity = request.query_params.get('granularity', 'day')
 
@@ -52,7 +69,9 @@ def campaign_report(request, campaign_id):
 
     GET /api/v1/reports/campaigns/{id}/
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
 
     service = ReportsService(workspace_id)
     try:
@@ -73,7 +92,9 @@ def campaigns_comparison(request):
     POST /api/v1/reports/campaigns/compare/
     Body: { "campaign_ids": ["id1", "id2", ...] }
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     campaign_ids = request.data.get('campaign_ids', [])
 
     if not campaign_ids:
@@ -100,7 +121,9 @@ def activity_timeline(request):
         - contact_id: Filter by contact
         - campaign_id: Filter by campaign
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     limit = int(request.query_params.get('limit', 50))
     event_types = request.query_params.get('event_types')
     contact_id = request.query_params.get('contact_id')
@@ -130,7 +153,9 @@ def hot_leads_report(request):
         - limit: Max leads (default: 50)
         - min_score: Minimum score threshold
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     limit = int(request.query_params.get('limit', 50))
     min_score = request.query_params.get('min_score')
 
@@ -150,7 +175,9 @@ def score_distribution(request):
 
     GET /api/v1/reports/score-distribution/
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
 
     service = ReportsService(workspace_id)
     distribution = service.get_score_distribution()
@@ -167,7 +194,9 @@ def performance_summary(request):
     Query params:
         - days: Period length in days (default: 7)
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     days = int(request.query_params.get('days', 7))
 
     service = ReportsService(workspace_id)
@@ -185,7 +214,9 @@ def export_campaign_report(request, campaign_id):
 
     GET /api/v1/reports/campaigns/{id}/export/
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
 
     service = ReportsService(workspace_id)
     csv_data = service.export_campaign_report_csv(campaign_id)
@@ -207,7 +238,9 @@ def export_contacts(request):
         "fields": ["email", "first_name", "last_name", ...]
     }
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     filters = request.data.get('filters')
     fields = request.data.get('fields')
 
@@ -229,7 +262,9 @@ def export_hot_leads(request):
     Query params:
         - min_score: Minimum score threshold (default: 70)
     """
-    workspace_id = request.headers.get('X-Workspace-ID')
+    workspace_id = get_workspace_id(request)
+    if not workspace_id:
+        return Response({'error': 'No workspace found'}, status=status.HTTP_400_BAD_REQUEST)
     min_score = int(request.query_params.get('min_score', 70))
 
     service = ReportsService(workspace_id)
